@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISMS - Inventory Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --color-dark-purple: #2D1B36;
+            --color-gray-custom: #333333;
+            --color-black-custom: #111111;
+            --color-white-custom: #F5F5F5;
+        }
+
+        body {
+            background-color: var(--color-black-custom);
+            color: var(--color-white-custom);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .bg-dark-purple { background-color: var(--color-dark-purple); }
+        .bg-gray-custom { background-color: var(--color-gray-custom); }
+        .bg-black-custom { background-color: var(--color-black-custom); }
+        .text-white-custom { color: var(--color-white-custom); }
+
+        .btn {
+            @apply px-4 py-2 rounded-none transition-colors duration-200 inline-flex items-center justify-center font-medium cursor-pointer;
+        }
+        
+        .btn-primary {
+            background-color: var(--color-dark-purple);
+            color: var(--color-white-custom);
+        }
+        
+        .btn-primary:hover { opacity: 0.8; }
+        
+        .btn-secondary {
+            background-color: var(--color-gray-custom);
+            color: var(--color-white-custom);
+        }
+
+        .btn-secondary:hover { opacity: 0.8; }
+
+        .card {
+            background-color: rgba(51, 51, 51, 0.2);
+            border: 1px solid rgba(51, 51, 51, 0.5);
+            border-radius: 0;
+            padding: 1.5rem;
+        }
+
+        input, select, textarea {
+            background-color: var(--color-black-custom) !important;
+            border: 1px solid rgba(51, 51, 51, 0.5) !important;
+            border-radius: 0 !important;
+            padding: 0.5rem 1rem !important;
+            outline: none !important;
+            color: var(--color-white-custom) !important;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--color-dark-purple) !important;
+            box-shadow: 0 0 0 1px var(--color-dark-purple) !important;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            color: rgba(245, 245, 245, 0.7);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: rgba(45, 27, 54, 0.2);
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid rgba(51, 51, 51, 0.5);
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            border-bottom: 1px solid rgba(51, 51, 51, 0.3);
+        }
+
+        tr:hover td {
+            background-color: rgba(51, 51, 51, 0.1);
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col">
+    {% if current_user.is_authenticated %}
+    <nav class="bg-dark-purple p-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center text-white">
+            <a href="{{ url_for('main.dashboard') }}" class="text-xl font-bold tracking-tighter">ISMS</a>
+            <div class="flex space-x-6">
+                <a href="{{ url_for('main.dashboard') }}" class="hover:text-white/80">Dashboard</a>
+                <a href="{{ url_for('products.index') }}" class="hover:text-white/80">Products</a>
+                <a href="{{ url_for('transactions.index') }}" class="hover:text-white/80">Transactions</a>
+                {% if current_user.role in ['Admin', 'Manager'] %}
+                <a href="{{ url_for('reports.index') }}" class="hover:text-white/80">Reports</a>
+                {% endif %}
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="text-sm opacity-70">Hello, {{ current_user.username }} ({{ current_user.role }})</span>
+                <a href="{{ url_for('auth.logout') }}" class="px-3 py-1 bg-gray-600 hover:bg-gray-500 text-xs transition-colors">Logout</a>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main class="flex-grow p-8">
+        <div class="max-w-7xl mx-auto">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="bg-red-900/30 border border-red-900/50 p-4 mb-6 text-sm">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="p-8 border-t border-gray-custom/30 text-center text-sm text-white-custom/50">
+        &copy; 2026 ISMS - Inventory and Stock Maintenance Management System
+    </footer>
+</body>
+</html>

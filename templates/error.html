@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center -mt-20">
+    <div class="card w-full max-w-md text-center">
+        <h1 class="text-6xl font-bold mb-4 tracking-tighter text-red-500">ERROR</h1>
+        <p class="text-xl mb-8 text-white-custom/70">{{ message }}</p>
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary w-full py-3 uppercase tracking-widest font-bold">RETURN TO DASHBOARD</a>
+    </div>
+</div>
+{% endblock %}

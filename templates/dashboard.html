@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+    <div class="card flex flex-col items-center justify-center py-10">
+        <span class="text-4xl font-bold mb-2">{{ products_count }}</span>
+        <span class="text-white-custom/50 uppercase tracking-widest text-xs">Total Products</span>
+    </div>
+    <div class="card flex flex-col items-center justify-center py-10">
+        <span class="text-4xl font-bold mb-2">${{ "{:,.2f}".format(total_inventory_value) }}</span>
+        <span class="text-white-custom/50 uppercase tracking-widest text-xs">Inventory Value</span>
+    </div>
+    <div class="card flex flex-col items-center justify-center py-10">
+        <span class="text-4xl font-bold mb-2 text-red-500">{{ low_stock_products|length }}</span>
+        <span class="text-white-custom/50 uppercase tracking-widest text-xs">Low Stock Alerts</span>
+    </div>
+    <div class="card flex flex-col items-center justify-center py-10">
+        <span class="text-4xl font-bold mb-2 text-orange-500">{{ expiring_soon|length }}</span>
+        <span class="text-white-custom/50 uppercase tracking-widest text-xs">Expiring Soon</span>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+    <div class="card">
+        <h2 class="text-xl font-bold mb-6 tracking-tight uppercase">Low Stock Products</h2>
+        {% if low_stock_products %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Min</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in low_stock_products %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td class="text-red-400 font-bold">{{ product.quantity }}</td>
+                            <td>{{ product.min_reorder_level }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-white-custom/50">No low stock alerts.</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2 class="text-xl font-bold mb-6 tracking-tight uppercase">Expiring Soon (30 Days)</h2>
+        {% if expiring_soon %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Expiry Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in expiring_soon %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td class="text-orange-400 font-bold">{{ product.expiry_date }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-white-custom/50">No products expiring soon.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="text-xl font-bold mb-6 tracking-tight uppercase">Recent Transactions</h2>
+    {% if recent_transactions %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Type</th>
+                    <th>Qty</th>
+                    <th>User</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tx in recent_transactions %}
+                    <tr>
+                        <td>{{ tx.product.name }}</td>
+                        <td>
+                            <span class="{{ 'text-green-400' if tx.type == 'IN' else 'text-orange-400' }}">
+                                {{ tx.type }}
+                            </span>
+                        </td>
+                        <td>{{ tx.quantity }}</td>
+                        <td class="text-xs text-white-custom/50">{{ tx.user.username }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-white-custom/50">No recent transactions.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold tracking-tighter uppercase">Inventory Reports</h1>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+    <div class="card lg:col-span-1 flex flex-col items-center justify-center">
+        <span class="text-white-custom/50 uppercase tracking-widest text-xs mb-2">Total Inventory Value</span>
+        <span class="text-5xl font-bold tracking-tighter">${{ "{:,.2f}".format(total_value) }}</span>
+    </div>
+
+    <div class="card lg:col-span-2">
+        <h2 class="text-xl font-bold mb-6 tracking-tight uppercase">Category Breakdown</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Items</th>
+                    <th>Total Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cat, count, value in category_breakdown %}
+                    <tr>
+                        <td class="font-bold">{{ cat }}</td>
+                        <td>{{ count }}</td>
+                        <td>${{ "{:,.2f}".format(value or 0) }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="text-xl font-bold mb-6 tracking-tight uppercase">Full Stock Valuation</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Price Each</th>
+                <th>Total Value</th>
+                <th>Expiry</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td class="font-bold">{{ product.name }}</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>${{ "{:,.2f}".format(product.price) }}</td>
+                    <td class="font-bold">${{ "{:,.2f}".format(product.quantity * product.price) }}</td>
+                    <td>
+                        {% if product.expiry_date %}
+                            <span class="{{ 'text-red-500 font-bold' if product.expiry_date < today else 'text-white-custom/50' }}">
+                                {{ product.expiry_date }}
+                            </span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if product.quantity <= 0 %}
+                            <span class="text-red-500 font-bold uppercase text-xs">Out of Stock</span>
+                        {% elif product.quantity <= product.min_reorder_level %}
+                            <span class="text-orange-400 font-bold uppercase text-xs">Low Stock</span>
+                        {% else %}
+                            <span class="text-green-400 font-bold uppercase text-xs">Optimal</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
